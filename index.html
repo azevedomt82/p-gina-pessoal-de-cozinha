@@ -107,6 +107,21 @@ body.cook .steps h4{font-size:21px}
 @keyframes pulse{50%{transform:scale(1.04)}}
 @media(prefers-reduced-motion:reduce){.chip.ring{animation:none}.card:hover{transform:none}}
 .note{font-size:13px;color:var(--soft);margin:30px 0 0}
+.fav{color:#e8a317;font-size:22px;line-height:1;margin-right:4px;vertical-align:-2px}
+.foot{margin:36px 0 0;display:flex;gap:12px;align-items:center;flex-wrap:wrap;color:var(--soft);font-size:14px}
+.link{border:0;background:none;color:var(--soft);text-decoration:underline;min-height:44px;padding:0 4px;font-weight:600}
+.btn.own[aria-pressed=true]{background:var(--c);border-color:var(--c);color:#fff}
+.toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%);background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:999px;font-weight:700;font-size:15px;z-index:9;max-width:calc(100% - 32px);text-align:center}
+.toast.erro{background:#c3302b;color:#fff}
+.toast[hidden]{display:none}
+dialog{border:0;border-radius:14px;padding:22px;max-width:min(520px,calc(100% - 32px));background:var(--paper);color:var(--ink);box-shadow:0 20px 60px -20px rgba(0,0,0,.6)}
+dialog::backdrop{background:rgba(10,15,25,.55)}
+dialog h2{margin:0 0 8px;font:700 34px/1 Caveat,cursive}
+dialog ol{padding-left:20px;margin:8px 0 14px}
+dialog li{margin-bottom:4px}
+dialog input{width:100%;font-size:16px;padding:12px;border-radius:10px;border:2px solid var(--line);background:var(--bg);color:var(--ink);min-height:46px}
+.row{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.msg{min-height:22px;margin:8px 0 0;font-weight:700}
 </style>
 </head>
 <body>
@@ -119,6 +134,29 @@ body.cook .steps h4{font-size:21px}
 <nav class="tabs" id="tabs" aria-label="Separadores"></nav>
 <main id="app"></main>
 <div class="dock" id="dock" aria-live="polite"></div>
+<div class="toast" id="toast" role="status" hidden></div>
+<dialog id="dono">
+  <h2>Modo dono</h2>
+  <p id="donoEstado">Com o modo dono ligado, cada receita ganha os botões «Já fiz» e «Favorita», e as alterações ficam gravadas no GitHub para toda a gente ver.</p>
+  <div id="donoForm">
+    <p>Para ligar, cria uma chave no GitHub (uma vez só):</p>
+    <ol>
+      <li>No GitHub: a tua foto → <b>Settings</b> → <b>Developer settings</b> → <b>Personal access tokens</b> → <b>Fine-grained tokens</b> → <b>Generate new token</b>.</li>
+      <li>Dá-lhe um nome e escolhe a validade.</li>
+      <li>Em <b>Repository access</b>: <b>Only select repositories</b> → este repositório.</li>
+      <li>Em <b>Permissions</b> → <b>Contents</b>: <b>Read and write</b>.</li>
+      <li><b>Generate token</b>, copia e cola aqui.</li>
+    </ol>
+    <label for="chave">Chave do GitHub</label>
+    <input id="chave" type="password" autocomplete="off" placeholder="github_pat_…">
+  </div>
+  <p class="msg" id="donoMsg"></p>
+  <div class="row">
+    <button class="btn" id="donoOk">Ligar</button>
+    <button class="btn" id="donoSair">Desligar</button>
+    <button class="btn" id="donoFechar">Fechar</button>
+  </div>
+</dialog>
 <script src="receitas.js"></script>
 <script>
 {
@@ -129,6 +167,40 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const store = {get(k,d){try{const v=localStorage.getItem("caderno:"+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem("caderno:"+k,JSON.stringify(v))}catch(e){}}};
 let filtro = store.get("filtro","Todas"), pesquisa = "";
+
+/* estado (já fiz e favoritas): estado.json no repositório */
+const GH = location.hostname.endsWith(".github.io") ? {o:location.hostname.split(".")[0], r:location.pathname.split("/")[1]} : {o:"azevedomt82", r:"p-gina-pessoal-de-cozinha"};
+let jaFiz = new Set(), favs = new Set(), token = store.get("token", null), sha = null, fila = Promise.resolve();
+const api = (p, o={}) => fetch("https://api.github.com/repos/"+GH.o+"/"+GH.r+p, Object.assign({cache:"no-store"}, o, {headers:{"Accept":"application/vnd.github+json","Authorization":"Bearer "+token,"X-GitHub-Api-Version":"2022-11-28"}}));
+const b64e = s => btoa(unescape(encodeURIComponent(s)));
+const b64d = s => decodeURIComponent(escape(atob(s.replace(/\n/g,""))));
+function aplica(e){ jaFiz = new Set(e.feitas||[]); favs = new Set(e.favoritas||[]); }
+const estadoTxt = () => JSON.stringify({feitas:[...jaFiz].sort(), favoritas:[...favs].sort()}, null, 2) + "\n";
+aplica(store.get("estado", {}));
+async function carregaEstado(){
+  try{
+    if (token){
+      const r = await api("/contents/estado.json?ref=main");
+      if (r.ok){ const j = await r.json(); sha = j.sha; aplica(JSON.parse(b64d(j.content))); store.set("estado", JSON.parse(estadoTxt())); return; }
+    }
+    const r = await fetch("estado.json?t="+Date.now(), {cache:"no-store"});
+    if (r.ok){ aplica(await r.json()); store.set("estado", JSON.parse(estadoTxt())); }
+  }catch(e){}
+}
+let tt = null;
+function aviso(t, erro){ const el=$("#toast"); el.textContent=t; el.className="toast"+(erro?" erro":""); el.hidden=false; clearTimeout(tt); tt=setTimeout(()=>el.hidden=true, erro?6000:2500); }
+async function put(txt, msg, tent){
+  if (!sha){ const r = await api("/contents/estado.json?ref=main"); if (r.ok) sha = (await r.json()).sha; }
+  const r = await api("/contents/estado.json", {method:"PUT", body:JSON.stringify({message:msg, content:b64e(txt), sha:sha||undefined, branch:"main"})});
+  if (r.ok){ sha = (await r.json()).content.sha; return; }
+  if ((r.status===409 || r.status===422) && tent > 0){ sha = null; return put(txt, msg, tent-1); }
+  throw new Error(r.status===401 ? "a chave é inválida ou expirou" : r.status===403||r.status===404 ? "a chave não tem permissão de escrita neste repositório" : "erro "+r.status);
+}
+function grava(msg){
+  const txt = estadoTxt(); store.set("estado", JSON.parse(txt));
+  aviso("A guardar…");
+  fila = fila.then(() => put(txt, msg, 2)).then(() => aviso("Guardado. O site atualiza em 1 a 2 minutos."), e => aviso("Não ficou gravado: "+e.message, true));
+}
 const UN = {cs:["colher de sopa","colheres de sopa"],ccafe:["colher de café","colheres de café"],chavena:["chávena","chávenas"],vagem:["vagem","vagens"],pau:["pau","paus"],cc:["colher de chá","colheres de chá"],pitada:["pitada","pitadas"],dente:["dente","dentes"],folha:["folha","folhas"],raminho:["raminho","raminhos"]};
 
 function qtd(i, f){
@@ -153,7 +225,7 @@ const curto = n => n.split(/[,(]/)[0].trim();
 function tabs(){
   const conta = {};
   R.forEach(r => conta[r.cozinha] = (conta[r.cozinha]||0)+1);
-  const lista = [["Todas",R.length,"#1e3557"],["Já fiz",R.filter(r=>r.feita).length,"#c3302b"]]
+  const lista = [["Todas",R.length,"#1e3557"],["Favoritas",R.filter(r=>favs.has(r.id)).length,"#e8a317"],["Já fiz",R.filter(r=>jaFiz.has(r.id)).length,"#c3302b"]]
     .concat(Object.keys(conta).sort().map(c=>[c,conta[c],corDe(c)]));
   $("#tabs").innerHTML = lista.map(([n,c,cor]) =>
     `<button class="tab" style="--c:${cor}" data-f="${esc(n)}" aria-pressed="${n===filtro}">${esc(n)}<span>${c}</span></button>`).join("");
@@ -161,18 +233,19 @@ function tabs(){
 
 function lista(){
   const t = pesquisa.toLowerCase();
-  const rs = R.slice().sort((a,b) => (b.feita-a.feita) || a.titulo.localeCompare(b.titulo,'pt')).filter(r =>
-    (filtro==="Todas" || (filtro==="Já fiz" ? r.feita : r.cozinha===filtro)) &&
+  const rs = R.slice().sort((a,b) => (jaFiz.has(b.id)-jaFiz.has(a.id)) || a.titulo.localeCompare(b.titulo,'pt')).filter(r =>
+    (filtro==="Todas" || (filtro==="Já fiz" ? jaFiz.has(r.id) : filtro==="Favoritas" ? favs.has(r.id) : r.cozinha===filtro)) &&
     (!t || (r.titulo+" "+r.resumo+" "+r.tipo+" "+r.cozinha+" "+r.ingredientes.map(i=>i.n).join(" ")).toLowerCase().includes(t)));
   $("#app").innerHTML = `<p class="count">${rs.length} ${rs.length===1?"receita":"receitas"}${filtro!=="Todas"?" em "+esc(filtro):""}</p>` +
     (rs.length ? `<div class="grid">${rs.map(r => `
       <button class="card" style="--c:${corDe(r.cozinha)}" data-id="${esc(r.id)}">
-        ${r.feita?'<span class="stamp">Já fiz</span>':""}
-        <span class="k">${esc(r.cozinha)} · ${esc(r.tipo)}</span>
+        ${jaFiz.has(r.id)?'<span class="stamp">Já fiz</span>':""}
+        <span class="k">${favs.has(r.id)?'<span class="fav" aria-label="Favorita">★</span>':""}${esc(r.cozinha)} · ${esc(r.tipo)}</span>
         <h2>${esc(r.titulo)}</h2>
         <p>${esc(r.resumo)}</p>
         <span class="meta">${r.doses} ${r.doses===1?"pessoa":"pessoas"} · ${esc(r.tempo||"")}</span>
-      </button>`).join("")}</div>` : `<p class="empty">Nada encontrado. Experimenta outra palavra ou o separador Todas.</p>`);
+      </button>`).join("")}</div>` : `<p class="empty">Nada encontrado. Experimenta outra palavra ou o separador Todas.</p>`) +
+    `<p class="foot">${token?"Modo dono ligado.":""}<button class="link" id="donoBtn">${token?"Gerir modo dono":"Modo dono"}</button></p>`;
 }
 
 const relogio = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg>';
@@ -199,8 +272,8 @@ function desenhaReceita(){
   $("#app").innerHTML = `<article class="page" style="--c:${corDe(r.cozinha)}">
     <button class="back" data-back>← Voltar ao caderno</button>
     <div class="head"><div><span class="k">${esc(r.cozinha)} · ${esc(r.tipo)}</span>
-      <h1>${esc(r.titulo)}${r.feita?'<span class="stamp">Já fiz</span>':""}</h1></div>
-      <div class="tools"><button class="btn" id="cook" aria-pressed="${document.body.classList.contains("cook")}">Modo cozinha</button></div></div>
+      <h1>${favs.has(r.id)?'<span class="fav" aria-label="Favorita">★</span>':""}${esc(r.titulo)}${jaFiz.has(r.id)?'<span class="stamp">Já fiz</span>':""}</h1></div>
+      <div class="tools">${token?`<button class="btn own" data-feita aria-pressed="${jaFiz.has(r.id)}">✓ Já fiz</button><button class="btn own" data-fav aria-pressed="${favs.has(r.id)}">★ Favorita</button>`:""}<button class="btn" id="cook" aria-pressed="${document.body.classList.contains("cook")}">Modo cozinha</button></div></div>
     <p class="lead">${esc(r.resumo)}</p>
     <div class="facts"><span>Tempo <b>${esc(r.tempo||"")}</b></span><span>Receita base <b>${r.doses} ${r.doses===1?"pessoa":"pessoas"}</b></span></div>
     <div class="cols">
@@ -275,11 +348,35 @@ document.addEventListener("click", e => {
   else if (el.dataset.p){ const t = timers.find(x=>x.id==el.dataset.p); if(t){ if(t.pausa){t.fim=Date.now()+t.resto*1000;t.pausa=false}else{t.resto=(t.fim-Date.now())/1000;t.pausa=true} dock(); } }
   else if (el.dataset.x){ timers = timers.filter(x=>x.id!=el.dataset.x); dock(); }
   else if (el.id==="cook"){ cozinha(!document.body.classList.contains("cook")); }
+  else if ("feita" in el.dataset && token){ const on=!jaFiz.has(atual.id); on?jaFiz.add(atual.id):jaFiz.delete(atual.id); desenhaReceita(); grava((on?"Já fiz: ":"Ainda não fiz: ")+atual.titulo); }
+  else if ("fav" in el.dataset && token){ const on=!favs.has(atual.id); on?favs.add(atual.id):favs.delete(atual.id); desenhaReceita(); grava((on?"Favorita: ":"Já não é favorita: ")+atual.titulo); }
+  else if (el.id==="donoBtn"){ abreDono(); }
+  else if (el.id==="donoFechar"){ $("#dono").close(); }
+  else if (el.id==="donoSair"){ token=null; store.set("token",null); $("#dono").close(); rota(); aviso("Modo dono desligado."); }
+  else if (el.id==="donoOk"){ ligaDono(); }
 });
 document.addEventListener("change", e => { const k = e.target.dataset && e.target.dataset.ing; if(k!=null){ e.target.checked?riscados.add(+k):riscados.delete(+k); } });
 $("#q").addEventListener("input", e => { pesquisa = e.target.value.trim(); if(atual){ location.hash=""; } else lista(); });
 
+function abreDono(){
+  $("#donoMsg").textContent = ""; $("#chave").value = "";
+  $("#donoForm").hidden = !!token; $("#donoOk").hidden = !!token; $("#donoSair").hidden = !token;
+  try{ $("#dono").showModal(); }catch(e){ $("#dono").setAttribute("open",""); }
+}
+async function ligaDono(){
+  const k = $("#chave").value.trim(); if (!k){ $("#donoMsg").textContent = "Cola primeiro a chave."; return; }
+  $("#donoMsg").textContent = "A verificar…";
+  token = k;
+  try{
+    const r = await api("");
+    const j = r.ok ? await r.json() : null;
+    if (!j || !j.permissions || !j.permissions.push) throw new Error(r.status===401 ? "Chave inválida." : "A chave não tem permissão de escrita neste repositório.");
+    store.set("token", k); $("#dono").close(); await carregaEstado(); rota(); aviso("Modo dono ligado.");
+  }catch(e){ token = null; $("#donoMsg").textContent = e.message.startsWith("A chave")||e.message.startsWith("Chave") ? e.message : "Não consegui falar com o GitHub. Tens internet?"; }
+}
+
 rota();
+carregaEstado().then(() => { if (!atual) { tabs(); lista(); } else desenhaReceita(); });
 if ("serviceWorker" in navigator && location.protocol === "https:") { navigator.serviceWorker.register("sw.js").catch(() => {}); }
 }
 </script>

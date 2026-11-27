@@ -1,6 +1,7 @@
 /* Caderno de Receitas — dados
    Cada receita:
-   id, titulo, cozinha, tipo, resumo, doses, tempo, origem, feita (true/false), vinho
+   id, titulo, cozinha, tipo, resumo, doses, tempo, origem, vinho
+   («Já fiz» e favoritas estão em estado.json, geridas pelo modo dono)
    ingredientes: [{q: número ou null (q.b.), u: unidade, n: nome, grupo: opcional}]
      unidades: g, ml, l, cs (colher de sopa), cc (colher de chá), ccafe (colher de café), chavena, pitada, un (unidades), dente, folha, raminho, vagem, pau
      q: null mostra «q.b.»; np: nome no plural para unidades
@@ -18,7 +19,6 @@ window.RECEITAS = [
   doses: 2,
   tempo: "45 min",
   origem: "Criada aqui no caderno, novembro de 2026",
-  feita: true,
   vinho: "Vinha da Curia (Bairrada tinto), aprovado à mesa. Alternativas: Quinta do Crasto Branco ou um Alvarinho.",
   ingredientes: [
     {q:160,u:"g",n:"arroz carnaroli ou arbóreo"},
@@ -69,7 +69,6 @@ window.RECEITAS = [
   doses: 2,
   tempo: "20 min",
   origem: "Criada aqui no caderno, junho de 2026",
-  feita: false,
   ingredientes: [
     {q:4,u:"un",n:"tomates maduros grandes"},
     {q:4,u:"un",n:"ovos"},
@@ -105,7 +104,6 @@ window.RECEITAS = [
   doses: 4,
   tempo: "30 min (com o bacalhau já demolhado)",
   origem: "Criada aqui no caderno, junho de 2026",
-  feita: false,
   ingredientes: [
     {q:300,u:"g",n:"bacalhau demolhado e desfiado, sem peles nem espinhas"},
     {q:150,u:"g",n:"farinha de trigo"},
@@ -144,7 +142,6 @@ window.RECEITAS = [
   doses: 8,
   tempo: "30 min + 4 h de frigorífico",
   origem: "Paulinha, do café do estúdio. Forma de fundo amovível com uns 26 cm.",
-  feita: true,
   ingredientes: [
     {q:300,u:"g",n:"bolacha Maria",grupo:"Base"},
     {q:190,u:"g",n:"manteiga amolecida",grupo:"Base"},
@@ -180,7 +177,6 @@ window.RECEITAS = [
   doses: 6,
   tempo: "15 min",
   origem: "eatsomethingvegan.com, «Fried Lemon Sauce»",
-  feita: false,
   ingredientes: [
     {q:1,u:"un",n:"limão grande de casca fina, em rodelas",np:"limões grandes de casca fina, em rodelas"},
     {q:1,u:"cs",n:"azeite (para fritar)"},
@@ -221,7 +217,6 @@ window.RECEITAS = [
   doses: 6,
   tempo: "30 min + 3 h de frio (ideal 12 h)",
   origem: "galbani.pt",
-  feita: false,
   ingredientes: [
     {q:500,u:"g",n:"queijo mascarpone"},
     {q:5,u:"un",n:"ovos"},
@@ -257,7 +252,6 @@ window.RECEITAS = [
   doses: 2,
   tempo: "1 h 15 min",
   origem: "Reconstruída a partir de um prato do restaurante Sétimo Ano (Gafanha da Nazaré)",
-  feita: false,
   ingredientes: [
     {q:300,u:"g",n:"lombo de atum fresco (qualidade sushi)",grupo:"Atum"},
     {q:3,u:"cs",n:"molho de soja",grupo:"Atum"},
@@ -303,7 +297,6 @@ window.RECEITAS = [
   doses: 4,
   tempo: "20 min",
   origem: "Criada aqui no caderno, outubro de 2026",
-  feita: false,
   ingredientes: [
     {q:600,u:"g",n:"carne picada (vaca, ou vaca e porco)"},
     {q:1,u:"un",n:"cebola média, picada",np:"cebolas médias, picadas"},
@@ -339,7 +332,6 @@ window.RECEITAS = [
   doses: 4,
   tempo: "5 min + 15 min de frio",
   origem: "Criada aqui no caderno, agosto de 2026",
-  feita: false,
   ingredientes: [
     {q:60,u:"ml",n:"azeite virgem extra, frutado e com carácter"},
     {q:60,u:"ml",n:"sumo de limão fresco, coado"},
@@ -368,7 +360,6 @@ window.RECEITAS = [
   doses: 8,
   tempo: "10 min + 1 h no frigorífico",
   origem: "Receita do João",
-  feita: true,
   ingredientes: [
     {q:200,u:"ml",n:"gin"},
     {q:200,u:"ml",n:"triple sec"},
@@ -397,7 +388,6 @@ window.RECEITAS = [
   doses: 4,
   tempo: "30 min + 30 min de repouso",
   origem: "Reconstruída a partir da salada do Walter, Armação de Pêra",
-  feita: false,
   ingredientes: [
     {q:4,u:"un",n:"tomates maduros (coração-de-boi ou rama)"},
     {q:1,u:"un",n:"pimento vermelho",np:"pimentos vermelhos"},
@@ -429,7 +419,6 @@ window.RECEITAS = [
   doses: 20,
   tempo: "1 h 30 min",
   origem: "Receita escrita à mão, transcrita aqui",
-  feita: false,
   ingredientes: [
     {q:500,u:"g",n:"açúcar"},
     {q:375,u:"ml",n:"água"},
@@ -461,7 +450,6 @@ window.RECEITAS = [
   doses: 4,
   tempo: "1 h + 3 h de frio",
   origem: "Criada aqui no caderno, junho de 2026",
-  feita: false,
   ingredientes: [
     {q:397,u:"g",n:"leite condensado"},
     {q:3,u:"un",n:"ovos"},
@@ -493,7 +481,6 @@ window.RECEITAS = [
   doses: 4,
   tempo: "20 min + 30 min de frio + 12 min de forno",
   origem: "Reconstruída a partir de uma sobremesa de restaurante",
-  feita: false,
   ingredientes: [
     {q:200,u:"g",n:"leite condensado"},
     {q:60,u:"g",n:"manteiga sem sal"},
@@ -526,7 +513,6 @@ window.RECEITAS = [
   doses: 4,
   tempo: "15 min",
   origem: "Criada aqui no caderno, junho de 2026",
-  feita: false,
   ingredientes: [
     {q:100,u:"g",n:"tomate seco em óleo, escorrido"},
     {q:30,u:"g",n:"pinhões"},
@@ -560,7 +546,6 @@ window.RECEITAS = [
   doses: 2,
   tempo: "25 min",
   origem: "Criada aqui no caderno, abril de 2026",
-  feita: false,
   ingredientes: [
     {q:200,u:"g",n:"penne"},
     {q:300,u:"g",n:"lombos de salmão fresco"},
@@ -595,7 +580,6 @@ window.RECEITAS = [
   doses: 4,
   tempo: "15 min + 30 min de frio",
   origem: "Criada aqui no caderno, junho de 2026",
-  feita: false,
   ingredientes: [
     {q:120,u:"g",n:"sardinhas em azeite, escorridas e sem espinhas"},
     {q:2,u:"un",n:"ovos cozidos"},
@@ -624,7 +608,6 @@ window.RECEITAS = [
   doses: 4,
   tempo: "15 min + 30 min de frio",
   origem: "Criada aqui no caderno, junho de 2026",
-  feita: false,
   ingredientes: [
     {q:180,u:"g",n:"atum em azeite, escorrido"},
     {q:2,u:"un",n:"ovos cozidos"},
@@ -652,7 +635,6 @@ window.RECEITAS = [
   doses: 4,
   tempo: "45 min",
   origem: "Ideia vista nas redes, organizada aqui",
-  feita: false,
   ingredientes: [
     {q:3,u:"un",n:"cebolas grandes"},
     {q:120,u:"g",n:"farinha de trigo"},
@@ -682,7 +664,6 @@ window.RECEITAS = [
   doses: 6,
   tempo: "30 min + 4 h de frio",
   origem: "Criada aqui no caderno, julho de 2026",
-  feita: false,
   ingredientes: [
     {q:400,u:"ml",n:"natas para bater (35% gordura)",grupo:"Pannacotta"},
     {q:100,u:"ml",n:"leite gordo",grupo:"Pannacotta"},
@@ -718,7 +699,6 @@ window.RECEITAS = [
   doses: 6,
   tempo: "15 min + 4 h de frio",
   origem: "Criada aqui no caderno, julho de 2026",
-  feita: false,
   ingredientes: [
     {q:500,u:"ml",n:"natas para bater (35% gordura)"},
     {q:70,u:"g",n:"açúcar"},
@@ -745,7 +725,6 @@ window.RECEITAS = [
   doses: 1,
   tempo: "3 min",
   origem: "Chef José Andrés",
-  feita: true,
   ingredientes: [
     {q:1,u:"un",n:"ovo",np:"ovos"},
     {q:1,u:"cs",n:"maionese"},
@@ -768,7 +747,6 @@ window.RECEITAS = [
   doses: 1,
   tempo: "5 min",
   origem: "Criada aqui no caderno, setembro de 2026",
-  feita: false,
   ingredientes: [
     {q:10,u:"folha",n:"hortelã"},
     {q:2,u:"cc",n:"açúcar branco"},
@@ -794,7 +772,6 @@ window.RECEITAS = [
   doses: 4,
   tempo: "10 min + 2 h a marinar",
   origem: "Criada aqui no caderno, setembro de 2026",
-  feita: false,
   ingredientes: [
     {q:60,u:"ml",n:"azeite"},
     {q:45,u:"ml",n:"sumo de limão"},
@@ -823,7 +800,6 @@ window.RECEITAS = [
   doses: 8,
   tempo: "10 min + 1 h de frio",
   origem: "Criada aqui no caderno, junho de 2026",
-  feita: false,
   ingredientes: [
     {q:125,u:"g",n:"manteiga sem sal, à temperatura ambiente"},
     {q:3,u:"dente",n:"alho"},
@@ -849,7 +825,6 @@ window.RECEITAS = [
   doses: 8,
   tempo: "10 min + 1 h de frio",
   origem: "Criada aqui no caderno, junho de 2026",
-  feita: false,
   ingredientes: [
     {q:125,u:"g",n:"manteiga sem sal, à temperatura ambiente"},
     {q:4,u:"un",n:"filetes de anchova em azeite, escorridos"},
@@ -875,7 +850,6 @@ window.RECEITAS = [
   doses: 8,
   tempo: "10 min + 1 h de frio",
   origem: "Criada aqui no caderno, junho de 2026",
-  feita: false,
   ingredientes: [
     {q:100,u:"g",n:"manteiga sem sal, à temperatura ambiente"},
     {q:50,u:"g",n:"queijo azul (gorgonzola ou roquefort)"},
@@ -900,7 +874,6 @@ window.RECEITAS = [
   doses: 4,
   tempo: "1 h 15 min",
   origem: "Criada aqui no caderno, maio de 2026",
-  feita: false,
   ingredientes: [
     {q:8,u:"un",n:"lulas médias limpas, com o corpo inteiro"},
     {q:150,u:"g",n:"linguiça em cubinhos"},
@@ -938,7 +911,6 @@ window.RECEITAS = [
   doses: 2,
   tempo: "20 min",
   origem: "Criada aqui no caderno, abril de 2026",
-  feita: false,
   ingredientes: [
     {q:200,u:"g",n:"linguine"},
     {q:300,u:"g",n:"lombos de salmão fresco"},
@@ -971,7 +943,6 @@ window.RECEITAS = [
   doses: 4,
   tempo: "20 min + 1 dia + 3 dias no frigorífico",
   origem: "Criada aqui no caderno, junho de 2026",
-  feita: false,
   ingredientes: [
     {q:4,u:"un",n:"limões médios"},
     {q:2,u:"un",n:"limas"},
@@ -1001,7 +972,6 @@ window.RECEITAS = [
   doses: 1,
   tempo: "2 meses",
   origem: "Criada aqui no caderno, maio de 2026",
-  feita: true,
   ingredientes: [
     {q:500,u:"g",n:"cerejas doces, lavadas e sem pé"},
     {q:700,u:"ml",n:"aguardente vínica (ou bagaço)"},
@@ -1031,7 +1001,6 @@ window.RECEITAS = [
   doses: 1,
   tempo: "2 meses (melhor 3 a 4)",
   origem: "Criada aqui no caderno, maio de 2026",
-  feita: false,
   ingredientes: [
     {q:500,u:"g",n:"ginjas, lavadas e sem pé"},
     {q:700,u:"ml",n:"aguardente vínica (ou bagaço)"},
@@ -1061,7 +1030,6 @@ window.RECEITAS = [
   doses: 4,
   tempo: "40 min",
   origem: "Publicação do Facebook, organizada aqui",
-  feita: false,
   ingredientes: [
     {q:300,u:"g",n:"massa de batata-doce seca (glass noodles)"},
     {q:300,u:"g",n:"porco, vaca ou frango em tiras"},
@@ -1100,7 +1068,6 @@ window.RECEITAS = [
   doses: 4,
   tempo: "50 min",
   origem: "Variação do japchae, organizada aqui",
-  feita: false,
   ingredientes: [
     {q:300,u:"g",n:"massa de batata-doce seca (glass noodles)"},
     {q:300,u:"g",n:"porco, vaca ou frango em tiras"},
@@ -1145,7 +1112,6 @@ window.RECEITAS = [
   doses: 4,
   tempo: "15 min",
   origem: "Criada aqui no caderno, maio de 2026",
-  feita: false,
   ingredientes: [
     {q:3,u:"un",n:"abacates maduros"},
     {q:1,u:"un",n:"lima (sumo)",np:"limas (sumo)"},
@@ -1174,7 +1140,6 @@ window.RECEITAS = [
   doses: 4,
   tempo: "25 min",
   origem: "Criada aqui no caderno, novembro de 2026",
-  feita: true,
   vinho: "Giroflé branco, bem fresco (uns 8 °C).",
   ingredientes: [
     {q:35,u:"g",n:"pinhões",grupo:"Pesto vermelho"},
@@ -1225,7 +1190,6 @@ window.RECEITAS = [
   doses: 4,
   tempo: "40 min",
   origem: "Criada aqui no caderno, junho de 2026",
-  feita: false,
   ingredientes: [
     {q:12,u:"un",n:"flores de courgete (masculinas, grandes)"},
     {q:150,u:"g",n:"ricotta"},
@@ -1257,7 +1221,6 @@ window.RECEITAS = [
   doses: 4,
   tempo: "25 min",
   origem: "Criada aqui no caderno, julho de 2026",
-  feita: false,
   ingredientes: [
     {q:2,u:"un",n:"farinheiras"},
     {q:200,u:"g",n:"batata palha de pacote"},
@@ -1288,7 +1251,6 @@ window.RECEITAS = [
   doses: 6,
   tempo: "1 h",
   origem: "Inspirada no Jamie Oliver",
-  feita: false,
   ingredientes: [
     {q:6,u:"un",n:"maçãs Royal Gala ou Golden, descascadas, em pedaços",grupo:"Fruta"},
     {q:50,u:"g",n:"açúcar amarelo",grupo:"Fruta"},
@@ -1322,7 +1284,6 @@ window.RECEITAS = [
   doses: 4,
   tempo: "30 min",
   origem: "Reconstruída a partir de um vídeo do Facebook (Bob Morano); pode não ser igual ao original",
-  feita: false,
   ingredientes: [
     {q:4,u:"un",n:"costeletas de porco sem osso"},
     {q:1,u:"cc",n:"sal"},
@@ -1354,7 +1315,6 @@ window.RECEITAS = [
   doses: 4,
   tempo: "1 h 15 min",
   origem: "Criada aqui no caderno, maio de 2026",
-  feita: false,
   ingredientes: [
     {q:500,u:"g",n:"carne de vaca picada"},
     {q:400,u:"g",n:"feijão encarnado cozido, escorrido"},
@@ -1393,7 +1353,6 @@ window.RECEITAS = [
   doses: 6,
   tempo: "15 min + 50 min de forno + 9 h de frio",
   origem: "@thechefoutwest",
-  feita: false,
   ingredientes: [
     {q:220,u:"g",n:"queijo cottage"},
     {q:200,u:"g",n:"iogurte grego natural"},
@@ -1427,7 +1386,6 @@ window.RECEITAS = [
   doses: 4,
   tempo: "40 min",
   origem: "Criada aqui no caderno, agosto de 2026",
-  feita: false,
   ingredientes: [
     {q:700,u:"g",n:"peito ou coxa de frango em cubos"},
     {q:1,u:"un",n:"cebola picada",np:"cebolas picadas"},
@@ -1463,7 +1421,6 @@ window.RECEITAS = [
   doses: 4,
   tempo: "45 min",
   origem: "Criada aqui no caderno, maio de 2026",
-  feita: false,
   ingredientes: [
     {q:700,u:"g",n:"peito de frango em cubos"},
     {q:400,u:"ml",n:"leite de coco"},
@@ -1504,7 +1461,6 @@ window.RECEITAS = [
   doses: 30,
   tempo: "1 h 30 min",
   origem: "crowdedkitchen.com",
-  feita: false,
   ingredientes: [
     {q:55,u:"g",n:"manteiga sem sal",grupo:"Conchas"},
     {q:50,u:"g",n:"açúcar mascavado claro",grupo:"Conchas"},
@@ -1548,7 +1504,6 @@ window.RECEITAS = [
   doses: 8,
   tempo: "1 h 15 min",
   origem: "Criada aqui no caderno, setembro de 2026",
-  feita: false,
   ingredientes: [
     {q:250,u:"g",n:"farinha"},
     {q:300,u:"g",n:"açúcar"},
@@ -1586,7 +1541,6 @@ window.RECEITAS = [
   doses: 8,
   tempo: "1 h",
   origem: "Criada aqui no caderno, setembro de 2026",
-  feita: false,
   ingredientes: [
     {q:250,u:"g",n:"farinha"},
     {q:300,u:"g",n:"açúcar"},
@@ -1620,7 +1574,6 @@ window.RECEITAS = [
   doses: 10,
   tempo: "15 min + 40 min de forno",
   origem: "Paulinha, do café do estúdio. Forma com buraco de 24 cm.",
-  feita: false,
   ingredientes: [
     {q:240,u:"ml",n:"óleo (1 chávena)"},
     {q:400,u:"g",n:"açúcar (2 chávenas)"},
@@ -1647,7 +1600,6 @@ window.RECEITAS = [
   doses: 9,
   tempo: "45 min + 1 h a arrefecer",
   origem: "Madelaine Rascan, Studio Era",
-  feita: false,
   ingredientes: [
     {q:300,u:"g",n:"cottage magro",grupo:"Bolo"},
     {q:2,u:"un",n:"ovos grandes",grupo:"Bolo"},
@@ -1686,7 +1638,6 @@ window.RECEITAS = [
   doses: 4,
   tempo: "1 h 30 min",
   origem: "J. Kenji López-Alt",
-  feita: true,
   ingredientes: [
     {q:2000,u:"g",n:"batatas (Agria ou Yukon Gold), descascadas, em quartos grandes"},
     {q:25,u:"g",n:"sal grosso (para a água)"},
@@ -1718,7 +1669,6 @@ window.RECEITAS = [
   doses: 4,
   tempo: "1 h",
   origem: "Receita trazida pelo João, organizada aqui",
-  feita: false,
   ingredientes: [
     {q:1000,u:"g",n:"batata nova média"},
     {q:15,u:"g",n:"sal marinho (para a água)"},
@@ -1752,7 +1702,6 @@ window.RECEITAS = [
   doses: 4,
   tempo: "30 min",
   origem: "Criada aqui no caderno, setembro de 2026",
-  feita: false,
   ingredientes: [
     {q:400,u:"g",n:"bacalhau demolhado e desfiado"},
     {q:500,u:"g",n:"batata palha"},
@@ -1786,7 +1735,6 @@ window.RECEITAS = [
   doses: 1,
   tempo: "5 min",
   origem: "Criada aqui no caderno, julho de 2026",
-  feita: false,
   ingredientes: [
     {q:1,u:"un",n:"lima em quartos",np:"limas em quartos"},
     {q:2,u:"cc",n:"açúcar branco"},
@@ -1810,7 +1758,6 @@ window.RECEITAS = [
   doses: 1,
   tempo: "1 mês de infusão",
   origem: "Receita antiga escrita à máquina. Em infusão desde novembro de 2026.",
-  feita: true,
   ingredientes: [
     {q:1,u:"l",n:"aguardente forte"},
     {q:11,u:"un",n:"tangerinas (só as cascas, sem o branco)"},
@@ -1838,7 +1785,6 @@ window.RECEITAS = [
   doses: 10,
   tempo: "2 h",
   origem: "Tia Judite, folha manuscrita (o título é difícil de ler)",
-  feita: false,
   ingredientes: [
     {q:6,u:"un",n:"ovos",grupo:"Pão de ló (quantidades de base, não vêm no original)"},
     {q:180,u:"g",n:"açúcar",grupo:"Pão de ló (quantidades de base, não vêm no original)"},
