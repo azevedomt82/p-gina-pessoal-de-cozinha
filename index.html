@@ -123,16 +123,16 @@ body.cook .steps h4{font-size:21px}
 <script>
 {
 const R = window.RECEITAS || [];
-const CORES = {"Italiana":"#cf3f2a","Grega":"#2a6fd6","Portuguesa":"#d89614","Americana":"#8a5a34","Coreana":"#c2366b","Mexicana":"#2f8f5b","Indiana":"#e06a1b","Bebidas":"#6b55b5"};
+const CORES = {"Italiana":"#cf3f2a","Grega":"#2a6fd6","Portuguesa":"#d89614","Americana":"#8a5a34","Coreana":"#c2366b","Mexicana":"#2f8f5b","Indiana":"#e06a1b","Bebidas":"#6b55b5","Japonesa":"#b8323f","Francesa":"#3a5fa0","Espanhola":"#c9761a","Inglesa":"#6d7a2f"};
 const corDe = c => CORES[c] || "#5f6f86";
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const store = {get(k,d){try{const v=localStorage.getItem("caderno:"+k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem("caderno:"+k,JSON.stringify(v))}catch(e){}}};
 let filtro = store.get("filtro","Todas"), pesquisa = "";
-const UN = {cs:["colher de sopa","colheres de sopa"],cc:["colher de chá","colheres de chá"],pitada:["pitada","pitadas"],dente:["dente","dentes"],folha:["folha","folhas"],raminho:["raminho","raminhos"]};
+const UN = {cs:["colher de sopa","colheres de sopa"],ccafe:["colher de café","colheres de café"],chavena:["chávena","chávenas"],vagem:["vagem","vagens"],pau:["pau","paus"],cc:["colher de chá","colheres de chá"],pitada:["pitada","pitadas"],dente:["dente","dentes"],folha:["folha","folhas"],raminho:["raminho","raminhos"]};
 
 function qtd(i, f){
-  if (i.q == null) return {t:"q.b.", n:i.n};
+  if (i.q == null) return {t:"", n:i.n+" (q.b.)"};
   let v = i.q * f, u = i.u;
   if (u === "l"){ v *= 1000; u = "ml"; }
   if (u === "cs" && v < .75){ v *= 3; u = "cc"; }
@@ -140,7 +140,7 @@ function qtd(i, f){
   if (u === "g" || u === "ml"){
     v = v < 20 ? Math.round(v) : v < 100 ? Math.round(v/5)*5 : Math.round(v/10)*10;
     v = Math.max(1, v);
-    if (u === "ml" && v >= 1000 && v % 1000 === 0) return {t:(v/1000)+" l de", n:i.n};
+    if (v >= 1000 && v % 1000 === 0) return {t:(v/1000)+(u==="ml"?" l de":" kg de"), n:i.n};
     return {t:v+" "+u+" de", n:i.n};
   }
   v = Math.max(1, Math.round(v));
@@ -161,7 +161,7 @@ function tabs(){
 
 function lista(){
   const t = pesquisa.toLowerCase();
-  const rs = R.filter(r =>
+  const rs = R.slice().sort((a,b) => (b.feita-a.feita) || a.titulo.localeCompare(b.titulo,'pt')).filter(r =>
     (filtro==="Todas" || (filtro==="Já fiz" ? r.feita : r.cozinha===filtro)) &&
     (!t || (r.titulo+" "+r.resumo+" "+r.tipo+" "+r.cozinha+" "+r.ingredientes.map(i=>i.n).join(" ")).toLowerCase().includes(t)));
   $("#app").innerHTML = `<p class="count">${rs.length} ${rs.length===1?"receita":"receitas"}${filtro!=="Todas"?" em "+esc(filtro):""}</p>` +
